@@ -2,10 +2,9 @@ module Api
   module V1
     class MessagesController < BaseController
       def create
-        @message = Message.new(message_params)
-        @message.save
+        message = Messages::Create.new(message_params).call
 
-        json_response @message
+        json_response message
       end
 
       private
