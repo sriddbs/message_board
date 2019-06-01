@@ -1,6 +1,8 @@
 module Api
   module V1
     class BaseController < ApplicationController
+      include ErrorHandler
+
       protect_from_forgery with: :null_session
 
       def json_response(response)
