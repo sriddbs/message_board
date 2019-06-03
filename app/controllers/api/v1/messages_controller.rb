@@ -13,6 +13,15 @@ module Api
         json_response message
       end
 
+      def update
+        user = User.find(params[:message][:user_id])
+        message = user.messages.find(params[:id])
+
+        Messages::Update.new(message, message_params).call
+
+        json_response(message)
+      end
+
       private
 
       def message_params

@@ -67,5 +67,76 @@ RSpec.describe 'Messages Request spec', type: :request do
         end
       end
     end
+
+    describe 'PATCH /api/v1/messages/:id' do
+      let(:user) { create(:user) }
+      let(:message) { create(:message, user: user) }
+
+      context 'when user not found' do
+        it 'fails and returns error message' do
+          params = {
+            message: {
+              user_id: 100,
+              description: 'desc1'
+            }
+          }
+
+          patch "/api/v1/messages/#{message.id}", params: params
+
+          expect(response.status).to eql(404)
+          expect(response.parsed_body).to eql({"errors"=>"Couldn't find User with 'id'=100"})
+        end
+      end
+
+      context 'when user and message does not belong to each other' do
+        let(:user_1) { create(:user) }
+
+        it 'fails to update the message' do
+          params = {
+            message: {
+              user_id: user_1.id,
+              description: 'desc1'
+            }
+          }
+
+          patch "/api/v1/messages/#{message.id}", params: params
+
+          expect(response.status).to eql(404)
+        end
+      end
+
+      context 'when user is present' do
+        it 'updates the messages' do
+          params = {
+            message: {
+              user_id: user.id,
+              description: 'desc1'
+            }
+          }
+
+          patch "/api/v1/messages/#{message.id}", params: params
+
+          expect(response).to be_successful
+          expect(response.parsed_body['description']).to eql('desc1')
+        end
+      end
+
+      context 'invalid params' do
+        it 'does not updates the message' do
+          params = {
+            message: {
+              user_id: user.id,
+              description: '',
+              title: ''
+            }
+          }
+
+          patch "/api/v1/messages/#{message.id}", params: params
+
+          expect(response.status).to eql(422)
+          expect(response.parsed_body).to eql({"errors"=>{"title"=>["can't be blank"], "description"=>["can't be blank"]}})
+        end
+      end
+    end
   end
 end
