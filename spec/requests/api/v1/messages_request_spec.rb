@@ -2,6 +2,18 @@ require 'rails_helper'
 
 RSpec.describe 'Messages Request spec', type: :request do
   describe 'Messages API' do
+    describe 'GET /api/v1/messages' do
+      it 'returns all the messags' do
+        user = create(:user)
+        messages = create_list(:message, 3, user: user)
+
+        get '/api/v1/messages'
+
+        expect(response).to be_successful
+        expect(response.parsed_body.size).to eql(3)
+      end
+    end
+
     describe 'POST /api/v1/messages' do
       let(:user) { FactoryBot.create(:user) }
       let(:params) { { message: { title: 'abc', description: 'desc', user_id: user.id } } }

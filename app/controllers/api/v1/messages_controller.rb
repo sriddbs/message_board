@@ -1,6 +1,12 @@
 module Api
   module V1
     class MessagesController < BaseController
+      def index
+        messages = Message.order('created_at DESC')
+
+        json_response(messages)
+      end
+
       def create
         message = Messages::Create.new(message_params).call
 
