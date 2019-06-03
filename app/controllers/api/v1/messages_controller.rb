@@ -4,7 +4,7 @@ module Api
       def index
         messages = Message.order('created_at DESC')
 
-        json_response(messages)
+        json_response(messages, paginate: true)
       end
 
       def create

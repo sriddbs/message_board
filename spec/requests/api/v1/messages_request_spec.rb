@@ -2,15 +2,33 @@ require 'rails_helper'
 
 RSpec.describe 'Messages Request spec', type: :request do
   describe 'Messages API' do
+    before do
+      user = create(:user)
+      create_list(:message, 3, user: user)
+    end
+
     describe 'GET /api/v1/messages' do
-      it 'returns all the messags' do
-        user = create(:user)
-        messages = create_list(:message, 3, user: user)
+      context 'default pagination params' do
+        it 'returns all the messages paginated' do
+          get '/api/v1/messages'
 
-        get '/api/v1/messages'
+          expect(response).to be_successful
+          expect(response.parsed_body.size).to eql(3)
+        end
+      end
 
-        expect(response).to be_successful
-        expect(response.parsed_body.size).to eql(3)
+      context 'per_page set to 1' do
+        it 'returns 1 message per page' do
+          get '/api/v1/messages', params: { per_page: 1 }
+
+          expect(response).to be_successful
+          expect(response.parsed_body.size).to eql(1)
+
+          get '/api/v1/messages', params: { per_page: 1, page: 2 }
+
+          expect(response).to be_successful
+          expect(response.parsed_body.size).to eql(1)
+        end
       end
     end
 
