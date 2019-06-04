@@ -137,6 +137,39 @@ RSpec.describe 'Messages Request spec', type: :request do
           expect(response.parsed_body).to eql({"errors"=>{"title"=>["can't be blank"], "description"=>["can't be blank"]}})
         end
       end
+
+      describe 'DELETE /api/v1/messages/:id' do
+        let(:user) { create(:user) }
+        let(:message) { create(:message, user: user) }
+
+        context 'when message exists' do
+          it 'deletes the message' do
+            params = {
+              message: {
+                user_id: user.id
+              }
+            }
+
+            delete "/api/v1/messages/#{message.slug}", params: params
+
+            expect(response).to be_successful
+          end
+        end
+
+        context 'when messages does not exist' do
+          it 'returns 404' do
+            params = {
+              message: {
+                user_id: user.id
+              }
+            }
+
+            delete "/api/v1/messages/111111", params: params
+
+            expect(response.status).to eql(404)
+          end
+        end
+      end
     end
   end
 end

@@ -22,6 +22,15 @@ module Api
         json_response(message)
       end
 
+      def destroy
+        user = User.find(params[:message][:user_id])
+        message = user.messages.friendly.find(params[:id])
+
+        Messages::Destroy.new(message).call
+
+        head :no_content
+      end
+
       private
 
       def message_params
