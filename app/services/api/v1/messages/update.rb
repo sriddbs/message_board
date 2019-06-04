@@ -15,6 +15,7 @@ module Api
 
         def update_message
           @message.update(@params)
+          @message
         end
       end
     end
