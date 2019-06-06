@@ -2,7 +2,8 @@ module Api
   module V1
     module Messages
       class Create
-        def initialize(params)
+        def initialize(user, params)
+          @user = user
           @params = params
         end
 
@@ -13,7 +14,7 @@ module Api
         private
 
         def create_message
-          message = Message.new(@params)
+          message = @user.messages.new(@params)
 
           message.save
 

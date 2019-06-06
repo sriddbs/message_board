@@ -2,8 +2,9 @@ require 'rails_helper'
 
 RSpec.describe 'Messages create service' do
   describe Api::V1::Messages::Create do
+    let(:user) { create(:user) }
     let(:params) { { message: {} } }
-    subject { described_class.new(params[:message]) }
+    subject { described_class.new(user, params[:message]) }
 
     context 'invalid params' do
       it 'fails to create a message' do
@@ -15,8 +16,6 @@ RSpec.describe 'Messages create service' do
     end
 
     context 'valid params' do
-      let(:user) { create(:user) }
-
       let(:params) {
         {
           message:

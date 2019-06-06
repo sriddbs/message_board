@@ -57,13 +57,24 @@ RSpec.describe 'Messages Request spec', type: :request do
       end
 
       context 'when params are invalid' do
-        params = { message: { title: 'abc' } }
+        context 'when user exists' do
+          it 'returns status 422' do
+            params = { message: { user_id: user.id, title: 'abc' } }
+            expect { post '/api/v1/messages', params: params }.to_not change { Message.count }
 
-        it 'throws error message' do
-          expect { post '/api/v1/messages', params: params }.to_not change { Message.count }
+            expect(response.status).to eql(422)
+            expect(response.parsed_body).to eql({"errors"=>{"description"=>["can't be blank"]}})
+          end
+        end
 
-          expect(response.status).to eql(422)
-          expect(response.parsed_body).to eql({"errors"=>{"description"=>["can't be blank"], "user"=>["can't be blank", "must exist"]}})
+        context 'when user does not exists' do
+          it 'returns status 404' do
+            params = { message: { user_id: 111111, title: 'abc' } }
+            expect { post '/api/v1/messages', params: params }.to_not change { Message.count }
+
+            expect(response.status).to eql(404)
+            expect(response.parsed_body).to eql("errors"=>"Couldn't find User with 'id'=111111")
+          end
         end
       end
     end

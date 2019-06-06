@@ -8,7 +8,8 @@ module Api
       end
 
       def create
-        message = Messages::Create.new(message_params).call
+        user = User.find(params[:message][:user_id])
+        message = Messages::Create.new(user, message_params).call
 
         json_response message
       end
