@@ -2,12 +2,12 @@ require 'rails_helper'
 
 RSpec.describe 'Messages Request spec', type: :request do
   describe 'Messages API' do
-    before do
-      user = create(:user)
-      create_list(:message, 3, user: user)
-    end
-
     describe 'GET /api/v1/messages' do
+      before do
+        user = create(:user)
+        create_list(:message, 3, user: user)
+      end
+
       context 'default pagination params' do
         it 'returns all the messages paginated' do
           get '/api/v1/messages'
@@ -33,7 +33,7 @@ RSpec.describe 'Messages Request spec', type: :request do
     end
 
     describe 'POST /api/v1/messages' do
-      let(:user) { FactoryBot.create(:user) }
+      let(:user) { create(:user) }
       let(:params) { { message: { title: 'abc', description: 'desc', user_id: user.id } } }
 
       context 'when params are valid' do
